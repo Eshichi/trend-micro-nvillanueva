@@ -10,9 +10,19 @@ const Style = {
         display: 'flex',
         justifyContent: 'center'
     },
-    cardContainer: {
+    cardContainer2by2: {
         display: 'grid',
-        gridTemplateColumns: 'repeat(6, 1fr)',
+        gridTemplateColumns: `repeat(2, 1fr) `,
+        gridGap: '10px'
+    },
+    cardContainer4by4: {
+        display: 'grid',
+        gridTemplateColumns: `repeat(4, 1fr) `,
+        gridGap: '10px'
+    },
+    cardContainer6by6: {
+        display: 'grid',
+        gridTemplateColumns: `repeat(6, 1fr) `,
         gridGap: '10px'
     }
 }
@@ -93,14 +103,17 @@ export default function App() {
             matched: false
         }
     ]
+    const [gameMode, setGameMode] = useState(0)
+    const [gameView, setGameView] = useState(Style.cardContainer2by2)
     const [randomNumbers, setRandomNumbers] = useState([])
     const [firstNumber, setFirstNumber] = useState(null)
     const [secondNumber, setSecondNumber] = useState(null)
     const [totalMatched, setTotalMatched] = useState(0)
     const [isClickDisabled, setIsClickDisabled] = useState(false)
-
+    
     const ShuffleNumbers=() =>{
-        const placeHolderArray = [...startingNumbers, ...startingNumbers].sort(()=> Math.random() - 0.5).map((number => ({...number , id: Math.random()} )))
+        const sliceArray = startingNumbers.slice(0,gameMode)
+        const placeHolderArray = [...sliceArray, ...sliceArray].sort(()=> Math.random() - 0.5).map((number => ({...number , id: Math.random()} )))
         setRandomNumbers(placeHolderArray)
         setTotalMatched(0)
     }
@@ -110,11 +123,25 @@ export default function App() {
             firstNumber ? setSecondNumber(number) :  setFirstNumber(number)
         }
     }
+
     useEffect(()=>{
         ShuffleNumbers()
-        setTotalMatched(0)
-        resetChoices()
-    },[])
+        switch (gameMode) {
+            case 2:
+                setGameView(Style.cardContainer2by2)
+                break;
+            case 8:
+                setGameView(Style.cardContainer4by4)
+                break;
+            case 18:
+                setGameView(Style.cardContainer6by6)
+                break;
+        
+            default:
+                break;
+        }
+    },[gameMode])
+
 
     useEffect(()=>{
         if(firstNumber && secondNumber){
@@ -144,7 +171,7 @@ export default function App() {
             }
         }
 
-        console.log(totalMatched , "totalMatched" , startingNumbers.length)
+        console.log(totalMatched , "totalMatched" , randomNumbers.length)
     },[firstNumber, secondNumber])
 
     const resetChoices = () => {
@@ -157,13 +184,16 @@ export default function App() {
         <div style={Style.container}>
             <div style={Style.headerTagDiv} >
                 <h1>Memory Game</h1>
+                <button onClick={() => setGameMode(2)}>2 x 2</button>
+                <button onClick={() => setGameMode(8)}>4 x 4</button>
+                <button onClick={() => setGameMode(18)}>6 x 6</button>
             </div>
             {/* <button onClick={RumbleNumbers}>Start</button> */}
             {
-                totalMatched < startingNumbers.length ? 
+                totalMatched < gameMode ? 
                 <>
                         <button onClick={ShuffleNumbers}>Restart</button>
-                        <div style={Style.cardContainer}>
+                        <div style={gameView}>
                             
                             {
                                 randomNumbers.map((number , index) => {
