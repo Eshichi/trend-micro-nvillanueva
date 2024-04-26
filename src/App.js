@@ -1,40 +1,168 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './style.css';
 import Card from './components/Card';
 
 const Style = {
-  container : {
-    padding: '20px',
-  },
-  headerTagDiv: {
-    display: 'flex',
-    justifyContent: 'center'
-  },
-  cardContainer: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(6, 1fr)',
-    gridGap: '10px'
-  }
+    container: {
+        padding: '20px',
+    },
+    headerTagDiv: {
+        display: 'flex',
+        justifyContent: 'center'
+    },
+    cardContainer: {
+        display: 'grid',
+        gridTemplateColumns: 'repeat(6, 1fr)',
+        gridGap: '10px'
+    }
 }
 
+
 export default function App() {
-  return (
-    <div style={Style.container}>
-      <div style={Style.headerTagDiv} >
-        <h1>Memory Game</h1>
-      </div>
+    const startingNumbers = [
+        {
+            value:  1,
+            matched: false
+        },
+        {
+            value:  2,
+            matched: false
+        },
+        {
+            value:  3,
+            matched: false
+        },
+        {
+            value:  4,
+            matched: false
+        },
+        {
+            value:  5,
+            matched: false
+        },
+        {
+            value:  6,
+            matched: false
+        },
+        {
+            value:  7,
+            matched: false
+        },
+        {
+            value:  8,
+            matched: false
+        },
+        {
+            value:  9,
+            matched: false
+        },
+        {
+            value:  10,
+            matched: false
+        },
+        {
+            value:  11,
+            matched: false
+        },
+        {
+            value:  12,
+            matched: false
+        },
+        {
+            value:  13,
+            matched: false
+        },
+        {
+            value:  14,
+            matched: false
+        },
+        {
+            value:  15,
+            matched: false
+        },
+        {
+            value:  16,
+            matched: false
+        },
+        {
+            value:  17,
+            matched: false
+        },
+        {
+            value:  18,
+            matched: false
+        }
+    ]
+    const [randomNumbers, setRandomNumbers] = useState([])
+    const [turnCounter , setTurnCounter ] = useState(0)
+    const [firstNumber, setFirstNumber] = useState(null)
+    const [secondNumber, setSecondNumber] = useState(null)
 
-      <div style={Style.cardContainer}>
+    const ShuffleNumbers=() =>{
+        const placeHolderArray = [...startingNumbers, ...startingNumbers].sort(()=> Math.random() - 0.5).map((number => ({...number , id: Math.random()} )))
+        setRandomNumbers(placeHolderArray)
+    }
 
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      <Card />
-      </div>
-      <p>Start editing to see some magic happen :)</p>
-    </div>
-  );
+    const ClickedCard = (number) => {
+        firstNumber ? setSecondNumber(number) :  setFirstNumber(number)
+    }
+    
+    useEffect(()=>{
+        if(firstNumber && secondNumber){
+            if(firstNumber.value === secondNumber.value){
+                setRandomNumbers(prev => {
+                    console.log("match?")
+                    return prev.map(number => {
+                        if(number.value === firstNumber.value) {
+                            return { ...number, matched:true}
+                        }else{
+                            return number
+                        }
+                    })
+                })
+                setTimeout(() => 
+                    {
+                        resetChoices();
+                    }, 5000
+                );
+                
+            }else {
+                console.log("dont match")
+                setTimeout(() => 
+                    {
+                        resetChoices();
+                    }, 1000
+                );
+            }
+        }
+    },[firstNumber, secondNumber])
+
+    const resetChoices = () => {
+        setFirstNumber(null)
+        setSecondNumber(null)
+    }
+
+    console.log(firstNumber, "firstNumber")
+    console.log(secondNumber, "secondNumber")
+    return (
+        <div style={Style.container}>
+            <div style={Style.headerTagDiv} >
+                <h1>Memory Game</h1>
+            </div>
+            {/* <button onClick={RumbleNumbers}>Start</button> */}
+            <button onClick={ShuffleNumbers}>Start</button>
+            <div style={Style.cardContainer}>
+                
+                {
+                    randomNumbers.map((number , index) => {
+                        number === secondNumber && console.log(number === secondNumber)
+                        return(
+                            <Card key={index} number={number} flipCard={number === firstNumber || number === secondNumber} matched={number.matched} ClickedCard={ClickedCard}/>
+                        )
+                    })
+                }
+            </div>
+            <p>Start editing to see some magic happen :)</p>
+        </div>
+    );
 }
