@@ -97,6 +97,8 @@ export default function App() {
     const [turnCounter , setTurnCounter ] = useState(0)
     const [firstNumber, setFirstNumber] = useState(null)
     const [secondNumber, setSecondNumber] = useState(null)
+    const [isClickDisabled, setIsClickDisabled] = useState(false)
+    const [removeCard, setRemvoeCard] = useState(false)
 
     const ShuffleNumbers=() =>{
         const placeHolderArray = [...startingNumbers, ...startingNumbers].sort(()=> Math.random() - 0.5).map((number => ({...number , id: Math.random()} )))
@@ -104,14 +106,17 @@ export default function App() {
     }
 
     const ClickedCard = (number) => {
-        firstNumber ? setSecondNumber(number) :  setFirstNumber(number)
+        if(!isClickDisabled){
+            firstNumber ? setSecondNumber(number) :  setFirstNumber(number)
+        }
     }
     
+
     useEffect(()=>{
         if(firstNumber && secondNumber){
+            setIsClickDisabled(true)
             if(firstNumber.value === secondNumber.value){
                 setRandomNumbers(prev => {
-                    console.log("match?")
                     return prev.map(number => {
                         if(number.value === firstNumber.value) {
                             return { ...number, matched:true}
@@ -120,14 +125,14 @@ export default function App() {
                         }
                     })
                 })
+                
                 setTimeout(() => 
                     {
                         resetChoices();
-                    }, 5000
+                    }, 1000
                 );
                 
             }else {
-                console.log("dont match")
                 setTimeout(() => 
                     {
                         resetChoices();
@@ -140,10 +145,9 @@ export default function App() {
     const resetChoices = () => {
         setFirstNumber(null)
         setSecondNumber(null)
+        setIsClickDisabled(false)
     }
-
-    console.log(firstNumber, "firstNumber")
-    console.log(secondNumber, "secondNumber")
+    
     return (
         <div style={Style.container}>
             <div style={Style.headerTagDiv} >
@@ -155,9 +159,9 @@ export default function App() {
                 
                 {
                     randomNumbers.map((number , index) => {
-                        number === secondNumber && console.log(number === secondNumber)
+                        number === secondNumber && console.log(number === secondNumber , "map")
                         return(
-                            <Card key={index} number={number} flipCard={number === firstNumber || number === secondNumber} matched={number.matched} ClickedCard={ClickedCard}/>
+                            <Card key={index} number={number} flipCard={number === firstNumber || number === secondNumber} removeCard={number.matched} ClickedCard={ClickedCard}/>
                         )
                     })
                 }

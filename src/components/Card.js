@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 const Style = {
     cardDiv : {
         width: '100%',
@@ -22,8 +22,13 @@ const Style = {
         fontWeight: 'bold',
         fontSize: '2rem'
     },
+    cardDivRemove : {
+        width: '100%',
+        height: '140px',
+        display: 'none'
+    },
     number: {
-        opacity: '0'
+        opacity: '1'
     },
     numberFlip: {
         transition: 'opacity 1s'  ,
@@ -31,20 +36,34 @@ const Style = {
     }
 }
 
-export default function Card ({number , flipCard, matched , ClickedCard}) {
+export default function Card ({number , flipCard, removeCard , ClickedCard }) {
 
-    // const [flipCard , setFlipCard] = useState(false)
+    const [cardStyle , setCardStyle] = useState(Style.cardDiv)
     
+    useEffect(()=>{
+        if(flipCard){
+            setCardStyle(Style.cardDivFlip)
+        }else{
+            setCardStyle(Style.cardDiv)
+        }
+
+        if(removeCard){
+            setCardStyle(Style.cardDivFlip)
+            setTimeout(() => 
+                    {
+                        setCardStyle(Style.cardDivRemove)
+                    }, 1000
+                );
+            
+        }
+    },[removeCard,  flipCard])
+
     const ClickedHandler = () => {
-        // console.log(turnCounter , "turnCounter")
         ClickedCard(number)
-        // console.log(flipCard , "false" )
-        // flipCard && console.log(flipCard , "flipCard" , number)
-        
     }
     return (
         <div>
-            <button style={flipCard ? Style.cardDivFlip : Style.cardDiv } onClick={ClickedHandler}>
+            <button style={ cardStyle } onClick={ClickedHandler}>
                 <span style={flipCard ? Style.numberFlip: Style.number }>{number.value}</span>
             </button>
         </div>
