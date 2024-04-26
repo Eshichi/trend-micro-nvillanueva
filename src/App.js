@@ -94,15 +94,15 @@ export default function App() {
         }
     ]
     const [randomNumbers, setRandomNumbers] = useState([])
-    const [turnCounter , setTurnCounter ] = useState(0)
     const [firstNumber, setFirstNumber] = useState(null)
     const [secondNumber, setSecondNumber] = useState(null)
+    const [totalMatched, setTotalMatched] = useState(0)
     const [isClickDisabled, setIsClickDisabled] = useState(false)
-    const [removeCard, setRemvoeCard] = useState(false)
 
     const ShuffleNumbers=() =>{
         const placeHolderArray = [...startingNumbers, ...startingNumbers].sort(()=> Math.random() - 0.5).map((number => ({...number , id: Math.random()} )))
         setRandomNumbers(placeHolderArray)
+        setTotalMatched(0)
     }
 
     const ClickedCard = (number) => {
@@ -110,7 +110,11 @@ export default function App() {
             firstNumber ? setSecondNumber(number) :  setFirstNumber(number)
         }
     }
-    
+    useEffect(()=>{
+        ShuffleNumbers()
+        setTotalMatched(0)
+        resetChoices()
+    },[])
 
     useEffect(()=>{
         if(firstNumber && secondNumber){
@@ -119,19 +123,18 @@ export default function App() {
                 setRandomNumbers(prev => {
                     return prev.map(number => {
                         if(number.value === firstNumber.value) {
+                            setTotalMatched(totalMatched+1)
                             return { ...number, matched:true}
                         }else{
                             return number
                         }
                     })
                 })
-                
                 setTimeout(() => 
                     {
                         resetChoices();
                     }, 1000
                 );
-                
             }else {
                 setTimeout(() => 
                     {
@@ -140,6 +143,8 @@ export default function App() {
                 );
             }
         }
+
+        console.log(totalMatched , "totalMatched" , startingNumbers.length)
     },[firstNumber, secondNumber])
 
     const resetChoices = () => {
@@ -147,25 +152,33 @@ export default function App() {
         setSecondNumber(null)
         setIsClickDisabled(false)
     }
-    
+
     return (
         <div style={Style.container}>
             <div style={Style.headerTagDiv} >
                 <h1>Memory Game</h1>
             </div>
             {/* <button onClick={RumbleNumbers}>Start</button> */}
-            <button onClick={ShuffleNumbers}>Start</button>
-            <div style={Style.cardContainer}>
-                
-                {
-                    randomNumbers.map((number , index) => {
-                        number === secondNumber && console.log(number === secondNumber , "map")
-                        return(
-                            <Card key={index} number={number} flipCard={number === firstNumber || number === secondNumber} removeCard={number.matched} ClickedCard={ClickedCard}/>
-                        )
-                    })
-                }
-            </div>
+            {
+                totalMatched < startingNumbers.length ? 
+                <>
+                        <button onClick={ShuffleNumbers}>Restart</button>
+                        <div style={Style.cardContainer}>
+                            
+                            {
+                                randomNumbers.map((number , index) => {
+                                    number === secondNumber && console.log(number === secondNumber , "map")
+                                    return(
+                                        <Card key={index} number={number} flipCard={number === firstNumber || number === secondNumber} removeCard={number.matched} ClickedCard={ClickedCard}/>
+                                    )
+                                })
+                            }
+                        </div>
+                </> : <>
+                <button onClick={ShuffleNumbers}>Play Again!</button>
+                </>
+            }
+            
             <p>Start editing to see some magic happen :)</p>
         </div>
     );
