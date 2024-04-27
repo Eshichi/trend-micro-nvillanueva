@@ -105,6 +105,7 @@ export default function App() {
     ]
     const [gameMode, setGameMode] = useState(0)
     const [gameView, setGameView] = useState(Style.cardContainer2by2)
+    const [isGameGoing, setIsGameGoing] = useState(true)
     const [randomNumbers, setRandomNumbers] = useState([])
     const [firstNumber, setFirstNumber] = useState(null)
     const [secondNumber, setSecondNumber] = useState(null)
@@ -116,6 +117,7 @@ export default function App() {
         const placeHolderArray = [...sliceArray, ...sliceArray].sort(()=> Math.random() - 0.5).map((number => ({...number , id: Math.random()} )))
         setRandomNumbers(placeHolderArray)
         setTotalMatched(0)
+        setIsGameGoing(true)
     }
 
     const ClickedCard = (number) => {
@@ -147,6 +149,14 @@ export default function App() {
         if(firstNumber && secondNumber){
             setIsClickDisabled(true)
             if(firstNumber.value === secondNumber.value){
+                //removes from array
+                // setRandomNumbers(prev => {
+                //     return prev.filter(number => number.value != firstNumber.value || number.value != secondNumber.value).map(number => {
+                //             console.log(number ,"number")
+                //             setTotalMatched(totalMatched+1)
+                //             return number
+                //     })
+                // })
                 setRandomNumbers(prev => {
                     return prev.map(number => {
                         if(number.value === firstNumber.value) {
@@ -170,42 +180,54 @@ export default function App() {
                 );
             }
         }
-
-        console.log(totalMatched , "totalMatched" , randomNumbers.length)
+        if(totalMatched == gameMode){
+            setIsGameGoing(false)
+        }
+        
     },[firstNumber, secondNumber])
+
 
     const resetChoices = () => {
         setFirstNumber(null)
         setSecondNumber(null)
         setIsClickDisabled(false)
     }
-
     return (
         <div style={Style.container}>
-            <div style={Style.headerTagDiv} >
-                <h1>Memory Game</h1>
-                <button onClick={() => setGameMode(2)}>2 x 2</button>
-                <button onClick={() => setGameMode(8)}>4 x 4</button>
-                <button onClick={() => setGameMode(18)}>6 x 6</button>
+            <div>
+                <div style={Style.headerTagDiv} >
+                    <h1>Memory Game</h1>
+                    
+                </div>
+               {
+                gameMode == 0  &&
+                 <div>
+                    <button onClick={() => setGameMode(2)}>2 x 2</button>
+                    <button onClick={() => setGameMode(8)}>4 x 4</button>
+                    <button onClick={() => setGameMode(18)}>6 x 6</button>
+                </div>
+               }
             </div>
-            {/* <button onClick={RumbleNumbers}>Start</button> */}
+
             {
-                totalMatched < gameMode ? 
+                gameMode > 0 && isGameGoing &&
                 <>
                         <button onClick={ShuffleNumbers}>Restart</button>
                         <div style={gameView}>
-                            
                             {
                                 randomNumbers.map((number , index) => {
-                                    number === secondNumber && console.log(number === secondNumber , "map")
                                     return(
                                         <Card key={index} number={number} flipCard={number === firstNumber || number === secondNumber} removeCard={number.matched} ClickedCard={ClickedCard}/>
                                     )
                                 })
                             }
-                        </div>
-                </> : <>
-                <button onClick={ShuffleNumbers}>Play Again!</button>
+                        </div> 
+                </> 
+            }
+            {
+                gameMode > 0 && !isGameGoing &&
+                <>
+                    <button onClick={ShuffleNumbers}>Play Again!</button>
                 </>
             }
             
