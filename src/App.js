@@ -141,7 +141,7 @@ export default function App() {
 
     const ClickedCard = (number) => {
         if(!isClickDisabled){
-            firstNumber ? setSecondNumber(number) :  setFirstNumber(number)
+                firstNumber ? number.id !== firstNumber.id && setSecondNumber(number) :  setFirstNumber(number)
         }
     }
 
@@ -240,16 +240,16 @@ export default function App() {
                                 })
                             }
                         </div> 
-                        <div>
+                        <div className='resetButtonContainer'>
                             <button className='buttons' onClick={ShuffleNumbers}>Restart</button>
                         </div>
                 </> 
             }
             {
                 gameMode > 0 && !isGameGoing &&
-                <>
+                <div className='resetButtonContainer'>
                     <button className='buttons' onClick={() =>  setGameMode(0)}>Play Again!</button>
-                </>
+                </div>
             }
             
             {/* <p>Start editing to see some magic happen :)</p> */}

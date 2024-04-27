@@ -6,7 +6,19 @@ const Style = {
         backgroundColor: '#C5D5EA',
         transform: 'rotateY(180deg)',
         transition :'transform 0.6s',
-        transformStyle: 'preserve-3d'
+        transformStyle: 'preserve-3d',
+        borderRadius: '12px'
+        
+    },
+    cardDivWrong : {
+        width: '100%',
+        height: '140px',
+        backgroundColor: '#ff5fab',
+        transform: 'rotateY(180deg)',
+        transition :'transform 0.6s',
+        transformStyle: 'preserve-3d',
+        borderRadius: '12px'
+        
     },
     cardDivFlip : {
         width: '100%',
@@ -14,13 +26,29 @@ const Style = {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#C5D5EA',
+        backgroundColor: '#6aa4f1',
         padding: '5px',
         transform: 'rotateY(0deg)',
         transition :'transform 0.6s',
         transformStyle: 'preserve-3d',
         fontWeight: 'bold',
-        fontSize: '2rem'
+        fontSize: '2rem',
+        borderRadius: '12px'
+    },
+    cardDivFlipRemove : {
+        width: '100%',
+        height: '140px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#44f98f',
+        padding: '5px',
+        transform: 'rotateY(0deg)',
+        transition :'transform 0.6s',
+        transformStyle: 'preserve-3d',
+        fontWeight: 'bold',
+        fontSize: '2rem',
+        borderRadius: '12px'
     },
     cardDivRemove : {
         width: '100%',
@@ -28,7 +56,7 @@ const Style = {
         display: 'none'
     },
     number: {
-        opacity: '1'
+        opacity: '0'
     },
     numberFlip: {
         transition: 'opacity 1s'  ,
@@ -51,9 +79,14 @@ export default function Card ({number , flipCard, removeCard , ClickedCard }) {
             setCardStyle(Style.cardDivFlip)
             setTimeout(() => 
                     {
-                        setCardStyle(Style.cardDivRemove)
-                    }, 1000
-                );
+                        setCardStyle(Style.cardDivFlipRemove)
+                    }, 500
+            );
+            setTimeout(() => 
+                {
+                    setCardStyle(Style.cardDivRemove)
+                }, 1000
+            );
             
         }
     },[removeCard,  flipCard])
@@ -64,7 +97,7 @@ export default function Card ({number , flipCard, removeCard , ClickedCard }) {
     return (
         <div>
             <button style={ cardStyle } onClick={ClickedHandler}>
-                <span style={flipCard ? Style.numberFlip: Style.number }>{number.value}</span>
+                <span style={flipCard || removeCard  ? Style.numberFlip: Style.number }>{number.value}</span>
             </button>
         </div>
     )
