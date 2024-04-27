@@ -6,9 +6,28 @@ const Style = {
     container: {
         padding: '20px',
     },
+    headerSection: {
+        width: '100%'
+    },
     headerTagDiv: {
         display: 'flex',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        marginBottom: '30px'
+    },
+    buttonContainer: {
+        width: '100%',
+        display: 'flex',
+        justifyContent: "center",
+        gap: "10%",
+    },
+    buttons: {
+        padding: '0px 15px',
+        width: 'auto',
+        height: '100px',
+        border: 'none',
+        backgroundColor: 'aquamarine',
+        borderRadius: '12px',
+        fontSize: '32px',
     },
     cardContainer2by2: {
         display: 'grid',
@@ -104,7 +123,7 @@ export default function App() {
         }
     ]
     const [gameMode, setGameMode] = useState(0)
-    const [gameView, setGameView] = useState(Style.cardContainer2by2)
+    const [gameView, setGameView] = useState('cardContainer2by2')
     const [isGameGoing, setIsGameGoing] = useState(true)
     const [randomNumbers, setRandomNumbers] = useState([])
     const [firstNumber, setFirstNumber] = useState(null)
@@ -130,13 +149,13 @@ export default function App() {
         ShuffleNumbers()
         switch (gameMode) {
             case 2:
-                setGameView(Style.cardContainer2by2)
+                setGameView('cardContainer2by2')
                 break;
             case 8:
-                setGameView(Style.cardContainer4by4)
+                setGameView('cardContainer4by4')
                 break;
             case 18:
-                setGameView(Style.cardContainer6by6)
+                setGameView('cardContainer6by6')
                 break;
         
             default:
@@ -186,25 +205,24 @@ export default function App() {
         
     },[firstNumber, secondNumber])
 
-
     const resetChoices = () => {
         setFirstNumber(null)
         setSecondNumber(null)
         setIsClickDisabled(false)
     }
     return (
-        <div style={Style.container}>
-            <div>
-                <div style={Style.headerTagDiv} >
+        <div  className='container'>
+            <div  className='headerSection'>
+                <div className='headerTagDiv'>
                     <h1>Memory Game</h1>
                     
                 </div>
                {
                 gameMode == 0  &&
-                 <div>
-                    <button onClick={() => setGameMode(2)}>2 x 2</button>
-                    <button onClick={() => setGameMode(8)}>4 x 4</button>
-                    <button onClick={() => setGameMode(18)}>6 x 6</button>
+                 <div className='buttonContainer'>
+                    <button className='buttons' onClick={() => setGameMode(2)}>2 x 2</button>
+                    <button className='buttons' onClick={() => setGameMode(8)}>4 x 4</button>
+                    <button className='buttons' onClick={() => setGameMode(18)}>6 x 6</button>
                 </div>
                }
             </div>
@@ -212,8 +230,8 @@ export default function App() {
             {
                 gameMode > 0 && isGameGoing &&
                 <>
-                        <button onClick={ShuffleNumbers}>Restart</button>
-                        <div style={gameView}>
+                        
+                        <div className={gameView}>
                             {
                                 randomNumbers.map((number , index) => {
                                     return(
@@ -222,16 +240,19 @@ export default function App() {
                                 })
                             }
                         </div> 
+                        <div>
+                            <button className='buttons' onClick={ShuffleNumbers}>Restart</button>
+                        </div>
                 </> 
             }
             {
                 gameMode > 0 && !isGameGoing &&
                 <>
-                    <button onClick={ShuffleNumbers}>Play Again!</button>
+                    <button className='buttons' onClick={() =>  setGameMode(0)}>Play Again!</button>
                 </>
             }
             
-            <p>Start editing to see some magic happen :)</p>
+            {/* <p>Start editing to see some magic happen :)</p> */}
         </div>
     );
 }
